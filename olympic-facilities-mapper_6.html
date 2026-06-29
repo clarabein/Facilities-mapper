@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Olympic Facilities Mapper</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600&family=Google+Sans+Text:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Google Sans Text', 'Google Sans', sans-serif; background: #f8f9fa; color: #202124; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+  #header { padding: 12px 20px; background: #fff; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  #header h1 { font-family: 'Google Sans', sans-serif; font-size: 16px; font-weight: 500; color: #202124; white-space: nowrap; }
+  #header h1 span { color: #1a73e8; }
+  #search-bar { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 240px; max-width: 460px; }
+  #search-input { flex: 1; background: #f1f3f4; border: 1px solid transparent; color: #202124; border-radius: 24px; padding: 8px 16px; font-size: 14px; font-family: 'Google Sans Text', sans-serif; outline: none; transition: all 0.2s; }
+  #search-input:focus { background: #fff; border-color: #1a73e8; box-shadow: 0 0 0 2px rgba(26,115,232,0.15); }
+  #search-input::placeholder { color: #9aa0a6; }
+  #search-btn { background: #1a73e8; color: #fff; border: none; border-radius: 24px; padding: 8px 20px; font-size: 14px; font-family: 'Google Sans', sans-serif; font-weight: 500; cursor: pointer; transition: background 0.15s; }
+  #search-btn:hover { background: #1557b0; }
+  #search-btn:disabled { background: #e0e0e0; color: #9aa0a6; cursor: default; }
+  #filters { padding: 8px 20px; background: #fff; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  #filters label { font-size: 11px; color: #9aa0a6; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; margin-right: 4px; font-family: 'Google Sans', sans-serif; }
+  .filter-btn { display: flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 20px; border: 1.5px solid; font-size: 13px; font-family: 'Google Sans', sans-serif; font-weight: 500; cursor: pointer; transition: all 0.15s; user-select: none; }
+  .filter-btn .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .filter-btn.inactive { background: transparent !important; color: #bdc1c6; border-color: #e0e0e0 !important; }
+  .filter-btn.inactive .dot { background: #dadce0 !important; }
+  .btn-pool  { border-color: #1a8fc1; background: rgba(26,143,193,0.08); color: #1a6fa0; } .btn-pool .dot  { background: #1a8fc1; }
+  .btn-track { border-color: #d44a2b; background: rgba(212,74,43,0.08);  color: #b83c20; } .btn-track .dot { background: #d44a2b; }
+  .btn-velo  { border-color: #9c5fc4; background: rgba(156,95,196,0.08); color: #7a3fa8; } .btn-velo .dot  { background: #9c5fc4; }
+  .btn-hockey{ border-color: #1e9e5e; background: rgba(30,158,94,0.08);  color: #166b40; } .btn-hockey .dot{ background: #1e9e5e; }
+  .btn-hall  { border-color: #c49b00; background: rgba(196,155,0,0.08);  color: #8a6d00; } .btn-hall .dot  { background: #c49b00; }
+  #map-wrap { flex: 1; position: relative; }
+  #map { width: 100%; height: 100%; }
+  #status-bar { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); padding: 6px 16px; font-size: 12px; color: #5f6368; display: flex; align-items: center; gap: 12px; z-index: 1000; border-top: 1px solid #e0e0e0; }
+  #result-count { font-weight: 500; color: #1a73e8; font-family: 'Google Sans', sans-serif; }
+  #loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.8); display: none; align-items: center; justify-content: center; z-index: 2000; flex-direction: column; gap: 12px; }
+  #loading-overlay.show { display: flex; }
+  .spinner { width: 36px; height: 36px; border: 3px solid #e0e0e0; border-top-color: #1a73e8; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #loading-text { font-size: 13px; color: #5f6368; }
+  #legend { position: absolute; top: 12px; right: 12px; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 14px; z-index: 1000; min-width: 168px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+  #legend h3 { font-size: 10px; font-weight: 500; color: #9aa0a6; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; font-family: 'Google Sans', sans-serif; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #3c4043; margin-bottom: 5px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .leaflet-popup-content-wrapper { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); color: #202124; font-family: 'Google Sans Text', sans-serif; }
+  .leaflet-popup-tip { background: #fff; }
+  .leaflet-popup-content { margin: 0; }
+  .popup-inner { padding: 12px 14px; min-width: 200px; max-width: 280px; }
+  .popup-type { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; font-family: 'Google Sans', sans-serif; }
+  .popup-name { font-size: 14px; font-weight: 500; color: #202124; margin-bottom: 4px; line-height: 1.3; font-family: 'Google Sans', sans-serif; }
+  .popup-detail { font-size: 12px; color: #5f6368; line-height: 1.6; }
+  .popup-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+  .popup-tag { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-family: 'Google Sans', sans-serif; font-weight: 500; }
+  .popup-verified { background: #e6f4ea; color: #137333; border: 1px solid #ceead6; }
+  .popup-unverified { background: #f1f3f4; color: #80868b; border: 1px solid #e0e0e0; }
+  .popup-source { font-size: 11px; margin-top: 8px; }
+  .popup-source a { color: #1a73e8; text-decoration: none; }
+  .popup-source a:hover { text-decoration: underline; }
+  #no-results { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 24px 32px; text-align: center; z-index: 1000; display: none; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+  #no-results h3 { font-size: 15px; color: #202124; margin-bottom: 6px; font-family: 'Google Sans', sans-serif; font-weight: 500; }
+  #no-results p { font-size: 13px; color: #5f6368; }
+  #search-btn-radius { background: #f1f3f4; color: #3c4043; border: 1px solid transparent; border-radius: 24px; padding: 8px 14px; font-size: 13px; font-family: 'Google Sans', sans-serif; font-weight: 500; cursor: pointer; }
+  #search-btn-radius:hover { background: #e8eaed; }
+  #select-all, #select-none { font-size: 12px; color: #5f6368; background: none; border: none; cursor: pointer; padding: 4px 8px; font-family: 'Google Sans Text', sans-serif; }
+  #select-all:hover, #select-none:hover { color: #1a73e8; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>Olympic Facilities <span>Mapper</span></h1>
+  <div id="search-bar">
+    <input type="text" id="search-input" placeholder="Search a city, region or country…" value="London, UK" />
+    <button id="search-btn">Search</button>
+  </div>
+  <button id="search-btn-radius">Search visible area</button>
+</div>
+
+<div id="filters">
+  <label>Filters</label>
+  <button class="filter-btn btn-pool active" data-type="pool"><span class="dot"></span> 50m / 33m Pool</button>
+  <button class="filter-btn btn-track active" data-type="track"><span class="dot"></span> Athletics Track</button>
+  <button class="filter-btn btn-velo active" data-type="velodrome"><span class="dot"></span> Velodrome</button>
+  <button class="filter-btn btn-hockey active" data-type="hockey"><span class="dot"></span> Hockey Field</button>
+  <button class="filter-btn btn-hall active" data-type="hall"><span class="dot"></span> Sports Hall</button>
+  <div style="margin-left:auto;display:flex;gap:8px;">
+    <button id="select-all">All on</button>
+    <button id="select-none">All off</button>
+  </div>
+</div>
+
+<div id="map-wrap">
+  <div id="map"></div>
+  <div id="legend">
+    <h3>Facility type</h3>
+    <div class="legend-item"><span class="legend-dot" style="background:#1a8fc1"></span> 50m / 33m Pool</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#d44a2b"></span> Athletics Track</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#9c5fc4"></span> Velodrome</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#1e9e5e"></span> Hockey Field</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#c49b00"></span> Sports Hall</div>
+    <div style="margin-top:10px;border-top:1px solid #e0e0e0;padding-top:8px;">
+      <div class="legend-item"><span style="width:10px;height:10px;border-radius:50%;border:2px solid #137333;flex-shrink:0;display:inline-block;"></span> Likely elite-standard</div>
+      <div class="legend-item"><span style="width:10px;height:10px;border-radius:50%;border:2px dashed #bdc1c6;flex-shrink:0;display:inline-block;"></span> Needs verification</div>
+    </div>
+  </div>
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <div id="loading-text">Searching…</div>
+  </div>
+  <div id="no-results">
+    <h3>No facilities found</h3>
+    <p>Try a larger city or zoom out and use "Search visible area".</p>
+  </div>
+  <div id="status-bar">
+    <span id="status-text">Enter a location and click Search to begin.</span>
+    <span id="result-count"></span>
+  </div>
+</div>
+
+<script>
+const API_KEY = 'AIzaSyBuY96MLxsRqaZ-zNBdR2GDw-1Fyn8dA2I';
+
+const COLORS  = { pool:'#1a8fc1', track:'#d44a2b', velodrome:'#9c5fc4', hockey:'#1e9e5e', hall:'#c49b00' };
+const LABELS  = { pool:'50m / 33m Pool', track:'Athletics Track', velodrome:'Velodrome', hockey:'Hockey Field', hall:'Sports Hall' };
+
+const QUERIES = {
+  pool:      'aquatics centre OR olympic swimming pool OR 50m pool',
+  track:     'athletics track',
+  velodrome: 'velodrome',
+  hockey:    'field hockey pitch OR hockey astroturf',
+  hall:      'indoor sports arena OR sports centre'
+};
+
+const ELITE_KW = {
+  pool:      ['olympic','50m','aquatic','national','international'],
+  track:     ['stadium','athletics','olympic','national','international'],
+  velodrome: ['velodrome','national','olympic','international'],
+  hockey:    ['national','olympic','international','stadium','astro'],
+  hall:      ['arena','national','international','olympic']
+};
+
+const map = L.map('map').setView([51.505, -0.09], 11);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '© OpenStreetMap © CARTO', subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+let allMarkers = [];
+let activeTypes = new Set(['pool','track','velodrome','hockey','hall']);
+const seenIds = new Set();
+
+function isElite(name, type) {
+  const n = (name||'').toLowerCase();
+  return (ELITE_KW[type]||[]).some(k => n.includes(k));
+}
+
+function makeIcon(type, elite) {
+  const c = COLORS[type];
+  const b = elite ? '#137333' : '#dadce0';
+  const bw = elite ? 2.5 : 1.5;
+  return L.divIcon({
+    html: `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22">
+      <circle cx="11" cy="11" r="8" fill="${c}" fill-opacity="0.9" stroke="${b}" stroke-width="${bw}"/>
+      <circle cx="11" cy="11" r="3.5" fill="white" fill-opacity="0.5"/>
+    </svg>`,
+    className:'', iconSize:[22,22], iconAnchor:[11,11], popupAnchor:[0,-13]
+  });
+}
+
+function buildPopup(place, type) {
+  const name = place.displayName?.text || place.name || 'Unnamed';
+  const elite = isElite(name, type);
+  const addr = place.formattedAddress || place.vicinity || '';
+  const lat = place.location?.latitude;
+  const lon = place.location?.longitude;
+  const gmUrl = `https://www.google.com/maps?q=${lat},${lon}&z=17`;
+  const rating = place.rating ? `${'★'.repeat(Math.round(place.rating))}${'☆'.repeat(5-Math.round(place.rating))} ${place.rating.toFixed(1)}` : '';
+  return `<div class="popup-inner">
+    <div class="popup-type" style="color:${COLORS[type]}">${LABELS[type]}</div>
+    <div class="popup-name">${name}</div>
+    ${addr ? `<div class="popup-detail">${addr}</div>` : ''}
+    ${rating ? `<div class="popup-detail" style="color:#f5a623;margin-top:2px">${rating}</div>` : ''}
+    <div class="popup-tags">
+      <span class="popup-tag ${elite?'popup-verified':'popup-unverified'}">${elite?'✓ Likely elite-standard':'Needs verification'}</span>
+    </div>
+    <div class="popup-source"><a href="${gmUrl}" target="_blank">Open in Google Maps ↗</a></div>
+  </div>`;
+}
+
+function clearMarkers() {
+  allMarkers.forEach(m => map.removeLayer(m));
+  allMarkers = [];
+  seenIds.clear();
+}
+
+function updateVisibility() {
+  allMarkers.forEach(m => {
+    if (activeTypes.has(m._type)) { if (!map.hasLayer(m)) m.addTo(map); }
+    else { if (map.hasLayer(m)) map.removeLayer(m); }
+  });
+  updateCount();
+}
+
+function updateCount() {
+  const n = allMarkers.filter(m => activeTypes.has(m._type)).length;
+  document.getElementById('result-count').textContent = n > 0 ? `${n} facilities shown` : '';
+}
+
+// Uses Places API (New) Text Search — single fast REST call per type
+async function searchType(type, lat, lon, radiusM) {
+  const url = `https://places.googleapis.com/v1/places:searchText`;
+  const body = {
+    textQuery: QUERIES[type],
+    locationBias: {
+      circle: {
+        center: { latitude: lat, longitude: lon },
+        radius: Math.min(radiusM, 50000)
+      }
+    },
+    maxResultCount: 20
+  };
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Goog-Api-Key': API_KEY,
+      'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.location,places.rating,places.id'
+    },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) { console.warn('Places API error', res.status, await res.text()); return []; }
+  const data = await res.json();
+  return (data.places || []).filter(p => {
+    if (seenIds.has(p.id)) return false;
+    seenIds.add(p.id);
+    return true;
+  });
+}
+
+async function runSearch(lat, lon, radiusM) {
+  const loading = document.getElementById('loading-overlay');
+  document.getElementById('no-results').style.display = 'none';
+  loading.classList.add('show');
+  document.getElementById('loading-text').textContent = 'Searching Google Places…';
+  clearMarkers();
+
+  const types = [...activeTypes];
+
+  // All types fire simultaneously
+  const results = await Promise.all(types.map(t => searchType(t, lat, lon, radiusM).then(places => ({ t, places }))));
+
+  let total = 0;
+  results.forEach(({ t, places }) => {
+    places.forEach(place => {
+      const plat = place.location?.latitude;
+      const plon = place.location?.longitude;
+      if (!plat || !plon) return;
+      const elite = isElite(place.displayName?.text || '', t);
+      const marker = L.marker([plat, plon], { icon: makeIcon(t, elite) });
+      marker._type = t;
+      marker.bindPopup(buildPopup(place, t), { maxWidth: 300 });
+      if (activeTypes.has(t)) marker.addTo(map);
+      allMarkers.push(marker);
+      total++;
+    });
+  });
+
+  loading.classList.remove('show');
+  updateCount();
+  if (total === 0) {
+    document.getElementById('no-results').style.display = 'block';
+    document.getElementById('status-text').textContent = 'No facilities found. Try a larger area.';
+  } else {
+    document.getElementById('status-text').textContent = `Found ${total} facilities. Green ring = likely elite-standard.`;
+  }
+}
+
+function getMapCentre() {
+  const c = map.getCenter();
+  const b = map.getBounds();
+  const ne = b.getNorthEast(), sw = b.getSouthWest();
+  const latD = Math.abs(ne.lat - sw.lat), lonD = Math.abs(ne.lng - sw.lng);
+  const radius = Math.min(Math.sqrt(latD*latD + lonD*lonD) / 2 * 111000, 50000);
+  return { lat: c.lat, lon: c.lng, radius };
+}
+
+async function geocodeAndSearch(query) {
+  const btn = document.getElementById('search-btn');
+  btn.disabled = true; btn.textContent = 'Searching…';
+  document.getElementById('status-text').textContent = 'Locating…';
+  try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`, { headers:{'Accept-Language':'en'} });
+    const d = await r.json();
+    if (!d.length) throw new Error('Not found');
+    const lat = parseFloat(d[0].lat), lon = parseFloat(d[0].lon);
+    map.setView([lat, lon], 12);
+    await new Promise(r => setTimeout(r, 300));
+    const { radius } = getMapCentre();
+    await runSearch(lat, lon, radius);
+  } catch(e) {
+    document.getElementById('status-text').textContent = 'Location not found. Try a different search.';
+    document.getElementById('loading-overlay').classList.remove('show');
+  }
+  btn.disabled = false; btn.textContent = 'Search';
+}
+
+document.getElementById('search-btn').addEventListener('click', () => {
+  const q = document.getElementById('search-input').value.trim();
+  if (q) geocodeAndSearch(q);
+});
+document.getElementById('search-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { const q = document.getElementById('search-input').value.trim(); if (q) geocodeAndSearch(q); }
+});
+document.getElementById('search-btn-radius').addEventListener('click', () => {
+  const { lat, lon, radius } = getMapCentre();
+  runSearch(lat, lon, radius);
+});
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const type = btn.dataset.type;
+    if (activeTypes.has(type)) { activeTypes.delete(type); btn.classList.add('inactive'); btn.classList.remove('active'); }
+    else { activeTypes.add(type); btn.classList.remove('inactive'); btn.classList.add('active'); }
+    updateVisibility();
+  });
+});
+document.getElementById('select-all').addEventListener('click', () => {
+  activeTypes = new Set(['pool','track','velodrome','hockey','hall']);
+  document.querySelectorAll('.filter-btn').forEach(b => { b.classList.remove('inactive'); b.classList.add('active'); });
+  updateVisibility();
+});
+document.getElementById('select-none').addEventListener('click', () => {
+  activeTypes = new Set();
+  document.querySelectorAll('.filter-btn').forEach(b => { b.classList.add('inactive'); b.classList.remove('active'); });
+  updateVisibility();
+});
+</script>
+</body>
+</html>
