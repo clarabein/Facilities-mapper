@@ -26,11 +26,11 @@
   .filter-btn .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .filter-btn.inactive { background: transparent !important; color: #bdc1c6; border-color: #e0e0e0 !important; }
   .filter-btn.inactive .dot { background: #dadce0 !important; }
-  .btn-pool  { border-color: #1a8fc1; background: rgba(26,143,193,0.08); color: #1a6fa0; } .btn-pool .dot  { background: #1a8fc1; }
-  .btn-track { border-color: #d44a2b; background: rgba(212,74,43,0.08);  color: #b83c20; } .btn-track .dot { background: #d44a2b; }
-  .btn-velo  { border-color: #9c5fc4; background: rgba(156,95,196,0.08); color: #7a3fa8; } .btn-velo .dot  { background: #9c5fc4; }
-  .btn-hockey{ border-color: #1e9e5e; background: rgba(30,158,94,0.08);  color: #166b40; } .btn-hockey .dot{ background: #1e9e5e; }
-  .btn-hall  { border-color: #c49b00; background: rgba(196,155,0,0.08);  color: #8a6d00; } .btn-hall .dot  { background: #c49b00; }
+  .btn-pool   { border-color: #1a8fc1; background: rgba(26,143,193,0.08); color: #1a6fa0; } .btn-pool .dot   { background: #1a8fc1; }
+  .btn-track  { border-color: #d44a2b; background: rgba(212,74,43,0.08);  color: #b83c20; } .btn-track .dot  { background: #d44a2b; }
+  .btn-velo   { border-color: #9c5fc4; background: rgba(156,95,196,0.08); color: #7a3fa8; } .btn-velo .dot   { background: #9c5fc4; }
+  .btn-hockey { border-color: #1e9e5e; background: rgba(30,158,94,0.08);  color: #166b40; } .btn-hockey .dot { background: #1e9e5e; }
+  .btn-hall   { border-color: #c49b00; background: rgba(196,155,0,0.08);  color: #8a6d00; } .btn-hall .dot   { background: #c49b00; }
   #map-wrap { flex: 1; position: relative; }
   #map { width: 100%; height: 100%; }
   #status-bar { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); padding: 6px 16px; font-size: 12px; color: #5f6368; display: flex; align-items: center; gap: 12px; z-index: 1000; border-top: 1px solid #e0e0e0; }
@@ -40,21 +40,23 @@
   .spinner { width: 36px; height: 36px; border: 3px solid #e0e0e0; border-top-color: #1a73e8; border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   #loading-text { font-size: 13px; color: #5f6368; }
-  #legend { position: absolute; top: 12px; right: 12px; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 14px; z-index: 1000; min-width: 168px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+  #legend { position: absolute; top: 12px; right: 12px; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 14px; z-index: 1000; min-width: 175px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
   #legend h3 { font-size: 10px; font-weight: 500; color: #9aa0a6; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; font-family: 'Google Sans', sans-serif; }
   .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #3c4043; margin-bottom: 5px; }
   .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
   .leaflet-popup-content-wrapper { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); color: #202124; font-family: 'Google Sans Text', sans-serif; }
   .leaflet-popup-tip { background: #fff; }
   .leaflet-popup-content { margin: 0; }
-  .popup-inner { padding: 12px 14px; min-width: 200px; max-width: 280px; }
+  .popup-inner { padding: 12px 14px; min-width: 200px; max-width: 300px; }
   .popup-type { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; font-family: 'Google Sans', sans-serif; }
   .popup-name { font-size: 14px; font-weight: 500; color: #202124; margin-bottom: 4px; line-height: 1.3; font-family: 'Google Sans', sans-serif; }
   .popup-detail { font-size: 12px; color: #5f6368; line-height: 1.6; }
   .popup-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
   .popup-tag { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-family: 'Google Sans', sans-serif; font-weight: 500; }
+  .popup-curated { background: #e8f0fe; color: #1a56d6; border: 1px solid #c5d6fb; }
   .popup-verified { background: #e6f4ea; color: #137333; border: 1px solid #ceead6; }
   .popup-unverified { background: #f1f3f4; color: #80868b; border: 1px solid #e0e0e0; }
+  .popup-country { background: #fce8e6; color: #c5221f; border: 1px solid #f5c6c4; }
   .popup-source { font-size: 11px; margin-top: 8px; }
   .popup-source a { color: #1a73e8; text-decoration: none; }
   .popup-source a:hover { text-decoration: underline; }
@@ -72,7 +74,7 @@
 <div id="header">
   <h1>Olympic Facilities <span>Mapper</span></h1>
   <div id="search-bar">
-    <input type="text" id="search-input" placeholder="Search a city, region or country…" value="London, UK" />
+    <input type="text" id="search-input" placeholder="Search a city, region or country…" value="United Kingdom" />
     <button id="search-btn">Search</button>
   </div>
   <button id="search-btn-radius">Search visible area</button>
@@ -101,6 +103,7 @@
     <div class="legend-item"><span class="legend-dot" style="background:#1e9e5e"></span> Hockey Field</div>
     <div class="legend-item"><span class="legend-dot" style="background:#c49b00"></span> Sports Hall</div>
     <div style="margin-top:10px;border-top:1px solid #e0e0e0;padding-top:8px;">
+      <div class="legend-item"><span style="width:10px;height:10px;border-radius:50%;background:#e8f0fe;border:2px solid #1a56d6;flex-shrink:0;display:inline-block;"></span> Verified elite / curated</div>
       <div class="legend-item"><span style="width:10px;height:10px;border-radius:50%;border:2px solid #137333;flex-shrink:0;display:inline-block;"></span> Likely elite-standard</div>
       <div class="legend-item"><span style="width:10px;height:10px;border-radius:50%;border:2px dashed #bdc1c6;flex-shrink:0;display:inline-block;"></span> Needs verification</div>
     </div>
@@ -114,34 +117,125 @@
     <p>Try a larger city or zoom out and use "Search visible area".</p>
   </div>
   <div id="status-bar">
-    <span id="status-text">Enter a location and click Search to begin.</span>
+    <span id="status-text">Verified elite venues shown globally. Search a location to add Google Places results.</span>
     <span id="result-count"></span>
   </div>
 </div>
 
 <script>
 const API_KEY = 'AIzaSyBuY96MLxsRqaZ-zNBdR2GDw-1Fyn8dA2I';
-
 const COLORS  = { pool:'#1a8fc1', track:'#d44a2b', velodrome:'#9c5fc4', hockey:'#1e9e5e', hall:'#c49b00' };
 const LABELS  = { pool:'50m / 33m Pool', track:'Athletics Track', velodrome:'Velodrome', hockey:'Hockey Field', hall:'Sports Hall' };
-
 const QUERIES = {
-  pool:      'aquatics centre OR olympic swimming pool OR 50m pool',
-  track:     'athletics track',
-  velodrome: 'velodrome',
-  hockey:    'field hockey pitch OR hockey astroturf',
-  hall:      'indoor sports arena OR sports centre'
+  pool:      'aquatics centre OR olympic swimming pool OR 50m pool OR university swimming pool OR school swimming pool',
+  track:     'athletics track OR athletics stadium OR university athletics track OR school athletics track',
+  velodrome: 'velodrome OR cycling track OR university velodrome',
+  hockey:    'field hockey pitch OR hockey astroturf OR university hockey pitch OR school hockey pitch',
+  hall:      'indoor sports arena OR sports centre hall OR university sports hall OR school sports hall OR leisure centre'
 };
-
 const ELITE_KW = {
-  pool:      ['olympic','50m','aquatic','national','international'],
-  track:     ['stadium','athletics','olympic','national','international'],
+  pool:      ['olympic','50m','aquatic','national','international','competition'],
+  track:     ['stadium','athletics','olympic','national','international','arena'],
   velodrome: ['velodrome','national','olympic','international'],
-  hockey:    ['national','olympic','international','stadium','astro'],
-  hall:      ['arena','national','international','olympic']
+  hockey:    ['national','olympic','international','stadium','astro','hockey centre'],
+  hall:      ['arena','national','international','olympic','performance','institute']
 };
 
-const map = L.map('map').setView([51.505, -0.09], 11);
+// ── CURATED GLOBAL ELITE VENUES ─────────────────────────────────────────────
+// Sources: UK Sport ETC, World Athletics certification, AOC, USOPC, INSEP, CONI, IOC
+const CURATED = [
+
+  // ══ UNITED KINGDOM ══
+  { name:'Loughborough University 50m Pool', type:'pool', lat:52.7694, lon:-1.2257, country:'UK', notes:'50m indoor pool. British Swimming National Centre. UK Sport ETC.' },
+  { name:'London Aquatics Centre', type:'pool', lat:51.5389, lon:-0.0168, country:'UK', notes:'50m Olympic pool. London 2012 legacy.' },
+  { name:'Manchester Aquatics Centre', type:'pool', lat:53.4678, lon:-2.2330, country:'UK', notes:'50m pool. British Swimming National Centre.' },
+  { name:'University of Bath STV Pool', type:'pool', lat:51.3787, lon:-2.3276, country:'UK', notes:'50m pool. UK Sport ETC. Aquatics GB base.' },
+  { name:'Ponds Forge International Sports Centre', type:'pool', lat:53.3785, lon:-1.4676, country:'UK', notes:'50m pool. Sheffield.' },
+  { name:'Tollcross International Swimming Centre', type:'pool', lat:55.8542, lon:-4.2119, country:'UK', notes:'50m pool. Glasgow. Commonwealth Games legacy.' },
+  { name:'Sandwell Aquatics Centre', type:'pool', lat:52.5100, lon:-2.0220, country:'UK', notes:'50m pool. Birmingham 2022 Commonwealth Games.' },
+  { name:'Loughborough University Athletics Centre', type:'track', lat:52.7701, lon:-1.2271, country:'UK', notes:'Paula Radcliffe Track + Seb Coe HiPac indoor. British Athletics NPI. UK Sport ETC.' },
+  { name:'Alexander Stadium', type:'track', lat:52.5221, lon:-1.8957, country:'UK', notes:'World Athletics certified. Birmingham 2022. UK national athletics centre.' },
+  { name:'Manchester Regional Athletics Arena', type:'track', lat:53.4800, lon:-2.2350, country:'UK', notes:'World Athletics certified.' },
+  { name:'Lee Valley Athletics Centre', type:'track', lat:51.6879, lon:-0.0283, country:'UK', notes:'International standard indoor/outdoor track. London.' },
+  { name:'University of Bath Athletics Track', type:'track', lat:51.3793, lon:-2.3260, country:'UK', notes:'UK Sport ETC. International standard.' },
+  { name:'Lee Valley VeloPark', type:'velodrome', lat:51.5423, lon:-0.0157, country:'UK', notes:'Olympic velodrome. London 2012. UCI Class 1.' },
+  { name:'National Cycling Centre Manchester', type:'velodrome', lat:53.4882, lon:-2.1982, country:'UK', notes:'UCI Class 1. Home of British Cycling.' },
+  { name:'Sir Chris Hoy Velodrome Glasgow', type:'velodrome', lat:55.8578, lon:-4.2487, country:'UK', notes:'Commonwealth Games 2014. UCI approved.' },
+  { name:'Derby Arena Velodrome', type:'velodrome', lat:52.9048, lon:-1.4651, country:'UK', notes:'Indoor velodrome. UCI approved.' },
+  { name:'Lee Valley Hockey and Tennis Centre', type:'hockey', lat:51.5420, lon:-0.0197, country:'UK', notes:'Olympic hockey pitch. London 2012. FIH approved.' },
+  { name:'Bisham Abbey National Sports Centre', type:'hockey', lat:51.5578, lon:-0.8734, country:'UK', notes:'UK Sport ETC. England Hockey national base.' },
+  { name:'Loughborough University Hockey Pitch', type:'hockey', lat:52.7689, lon:-1.2275, country:'UK', notes:'International standard astroturf. UK Sport ETC.' },
+  { name:'EIS Sheffield', type:'hall', lat:53.3890, lon:-1.4718, country:'UK', notes:'English Institute of Sport. UKSI High Performance Centre.' },
+  { name:'Bisham Abbey Sports Hall', type:'hall', lat:51.5579, lon:-0.8730, country:'UK', notes:'UK Sport ETC. UKSI High Performance Centre.' },
+  { name:'University of Bath Sports Hall', type:'hall', lat:51.3788, lon:-2.3272, country:'UK', notes:'UK Sport ETC. Multi-sport.' },
+  { name:'Emirates Arena Glasgow', type:'hall', lat:55.8576, lon:-4.2479, country:'UK', notes:'Multi-sport arena. Commonwealth Games 2014.' },
+
+  // ══ AUSTRALIA ══
+  { name:'Australian Institute of Sport (AIS)', type:'track', lat:-35.2468, lon:149.1010, country:'Australia', notes:'National elite sports precinct. Athletics track, multi-sport halls, pools. Canberra.' },
+  { name:'AIS Aquatic Centre', type:'pool', lat:-35.2471, lon:149.1005, country:'Australia', notes:'50m pool. Australian Institute of Sport, Canberra.' },
+  { name:'Melbourne Sports & Aquatic Centre (MSAC)', type:'pool', lat:-37.8480, lon:144.9631, country:'Australia', notes:'50m indoor pool + 50m outdoor. Albert Park, Melbourne. International competition standard.' },
+  { name:'Sydney Olympic Park Aquatic Centre', type:'pool', lat:-33.8456, lon:151.0707, country:'Australia', notes:'50m pool. Sydney 2000 Olympic legacy. Homebush.' },
+  { name:'Gold Coast Aquatic Centre (Southport)', type:'pool', lat:-27.9689, lon:153.3960, country:'Australia', notes:'50m pool. Gold Coast. Commonwealth Games 2018 legacy.' },
+  { name:'Queensland Aquatic & Recreation Centre (QARC Chandler)', type:'pool', lat:-27.5415, lon:153.1048, country:'Australia', notes:'50m pool. Brisbane. 2032 Olympic supporting aquatics venue.' },
+  { name:'SA Aquatic & Leisure Centre Adelaide', type:'pool', lat:-34.9285, lon:138.5311, country:'Australia', notes:'50m pool. Adelaide. South Australian elite swimming base.' },
+  { name:'Sydney Olympic Park Athletics Centre', type:'track', lat:-33.8469, lon:151.0688, country:'Australia', notes:'International standard athletics track. Sydney 2000 legacy.' },
+  { name:'Queensland Sport and Athletics Centre (QSAC)', type:'track', lat:-27.5390, lon:153.0862, country:'Australia', notes:'World Athletics certified track. Brisbane. 2032 Olympic athletics venue.' },
+  { name:'Melbourne Olympic Park / Lakeside Stadium', type:'track', lat:-37.8285, lon:144.9831, country:'Australia', notes:'International athletics track. Melbourne.' },
+  { name:'Anna Meares Velodrome', type:'velodrome', lat:-27.9712, lon:153.3924, country:'Australia', notes:'UCI certified. Gold Coast 2018 Commonwealth Games. Will host 2030 UCI Track World Champs.' },
+  { name:'Dunc Gray Velodrome', type:'velodrome', lat:-33.9028, lon:151.0341, country:'Australia', notes:'Sydney 2000 Olympic velodrome. Bass Hill.' },
+  { name:'Gold Coast Performance Centre (GCPC) Hockey', type:'hockey', lat:-27.9680, lon:153.3950, country:'Australia', notes:'Runaway Bay. International standard hockey pitch. Elite prep camp base.' },
+  { name:'Perth Hockey Stadium', type:'hockey', lat:-31.9455, lon:115.8749, country:'Australia', notes:'International standard. Home of Hockey Australia.' },
+  { name:'AIS Arena Canberra', type:'hall', lat:-35.2462, lon:149.1013, country:'Australia', notes:'Multi-sport indoor arena. Australian Institute of Sport.' },
+  { name:'Melbourne Arena (John Cain Arena)', type:'hall', lat:-37.8224, lon:144.9814, country:'Australia', notes:'Multi-sport elite venue. Melbourne Olympic Park precinct.' },
+
+  // ══ UNITED STATES ══
+  { name:'US Olympic & Paralympic Training Center Colorado Springs', type:'pool', lat:38.8481, lon:-104.7386, country:'USA', notes:'50m pool. Flagship USOPC training centre. High altitude (6,035ft).' },
+  { name:'Chula Vista Elite Athlete Training Center', type:'track', lat:32.6284, lon:-116.9792, country:'USA', notes:'Official US Olympic training site. Track & field, field hockey, cycling. San Diego.' },
+  { name:'USOPTC Velodrome Colorado Springs', type:'velodrome', lat:38.8393, lon:-104.7412, country:'USA', notes:'333.3m banked velodrome. Official US Olympic cycling training venue.' },
+  { name:'Chula Vista Field Hockey Pitch', type:'hockey', lat:32.6289, lon:-116.9798, country:'USA', notes:'Official US Olympic training site. FIH standard.' },
+  { name:'USOPTC Sports Center Colorado Springs', type:'hall', lat:38.8477, lon:-104.7381, country:'USA', notes:'Multi-sport gymnasium complex. Official USOPC training centre.' },
+  { name:'Stanford Aquatic Center', type:'pool', lat:37.4347, lon:-122.1609, country:'USA', notes:'50m pool. Elite USA Swimming training base. Palo Alto, California.' },
+  { name:'University of Texas Aquatic Center Austin', type:'pool', lat:30.2849, lon:-97.7341, country:'USA', notes:'50m pool. Elite swimming training venue.' },
+  { name:'Hayward Field Eugene', type:'track', lat:44.0449, lon:-123.0689, country:'USA', notes:'World Athletics Platinum Label. US national athletics centre. Eugene, Oregon.' },
+  { name:'Los Angeles Memorial Coliseum', type:'track', lat:34.0138, lon:-118.2878, country:'USA', notes:'Historic Olympic stadium. LA 2028 athletics venue. World Athletics certified.' },
+  { name:'Dignity Health Sports Park (Carson)', type:'hockey', lat:33.8643, lon:-118.2607, country:'USA', notes:'Field hockey. Los Angeles area. Olympic training site.' },
+
+  // ══ FRANCE ══
+  { name:'INSEP Paris — Christine Caron Aquatics Centre', type:'pool', lat:48.8389, lon:2.4396, country:'France', notes:'50m pool. France national elite training institute. Bois de Vincennes, Paris.' },
+  { name:'INSEP Paris — Athletics Stadium', type:'track', lat:48.8392, lon:2.4401, country:'France', notes:'International athletics track + Halle Maigrot 340m indoor. France national elite centre.' },
+  { name:'INSEP Paris — Indoor Velodrome', type:'velodrome', lat:48.8390, lon:2.4398, country:'France', notes:'Indoor velodrome. INSEP national elite training campus.' },
+  { name:'INSEP Paris — Hockey Pitch', type:'hockey', lat:48.8388, lon:2.4394, country:'France', notes:'FIH standard hockey pitch. INSEP national elite campus.' },
+  { name:'INSEP Paris — Multi-Sport Hall', type:'hall', lat:48.8391, lon:2.4400, country:'France', notes:'Multi-sport hall. France premier elite training institute. 730 athletes in residence.' },
+  { name:'Stade de France', type:'track', lat:48.9244, lon:2.3601, country:'France', notes:'World Athletics Platinum Label. Paris 2024 Olympic athletics venue.' },
+  { name:'Paris La Défense Arena Pool', type:'pool', lat:48.8958, lon:2.2274, country:'France', notes:'50m pool. Paris 2024 Olympic swimming venue.' },
+  { name:'Saint-Denis Velodrome National', type:'velodrome', lat:48.9205, lon:2.3578, country:'France', notes:'French national velodrome. Elite cycling training.' },
+
+  // ══ ITALY ══
+  { name:'CONI Giulio Onesti Centre — 50m Pool', type:'pool', lat:41.9312, lon:12.4729, country:'Italy', notes:'50m pool. CONI Olympic Preparation Centre. Acqua Acetosa, Rome.' },
+  { name:'CONI Giulio Onesti Centre — Athletics', type:'track', lat:41.9315, lon:12.4733, country:'Italy', notes:'International athletics track. CONI national Olympic preparation centre, Rome.' },
+  { name:'CONI Giulio Onesti Centre — Hockey', type:'hockey', lat:41.9310, lon:12.4726, country:'Italy', notes:'FIH standard hockey pitch. CONI Acqua Acetosa, Rome.' },
+  { name:'CONI Giulio Onesti Centre — Sports Hall', type:'hall', lat:41.9313, lon:12.4731, country:'Italy', notes:'Multi-sport hall. CONI national Olympic preparation centre, Rome. Newly rebuilt 2024.' },
+  { name:'Foro Italico Stadio del Nuoto', type:'pool', lat:41.9338, lon:12.4659, country:'Italy', notes:'50m pool. Rome. Historic Olympic venue.' },
+  { name:'Stadio Olimpico Roma', type:'track', lat:41.9340, lon:12.4537, country:'Italy', notes:'IAAF certified athletics track. Rome. UEFA Euro 2032 venue.' },
+  { name:'Velodromo Enzo Sacchi Turin', type:'velodrome', lat:45.0624, lon:7.6762, country:'Italy', notes:'Italian national velodrome. Turin.' },
+  { name:'AIS European Training Centre Varese', type:'hall', lat:45.8205, lon:8.8257, country:'Italy', notes:'Australian Sports Commission European Training Centre. Multi-sport. Varese, Italy.' },
+
+  // ══ TURKEY ══
+  { name:'Atatürk Olympic Stadium Istanbul', type:'track', lat:41.0726, lon:28.7795, country:'Turkey', notes:'IAAF & IOC certified athletics track. 76,000 capacity. Istanbul.' },
+  { name:'Atatürk Olympic Stadium Warm-Up Track', type:'track', lat:41.0729, lon:28.7802, country:'Turkey', notes:'IAAF standard warm-up track. Adjacent to Atatürk Olympic Stadium.' },
+  { name:'Istanbul Olimpiyat Yüzme Havuzu', type:'pool', lat:41.0731, lon:28.7790, country:'Turkey', notes:'50m Olympic pool. Istanbul Olympic precinct.' },
+  { name:'Bursa Osmangazi Athletics Stadium', type:'track', lat:40.2019, lon:29.0611, country:'Turkey', notes:'International standard athletics track. Bursa.' },
+  { name:'Ankara 19 Mayıs Stadium', type:'track', lat:39.9425, lon:32.8631, country:'Turkey', notes:'Athletics track. Ankara national sports complex.' },
+
+  // ══ SENEGAL ══
+  { name:'Stade Iba Mar Diop — Athletics Track', type:'track', lat:14.6937, lon:-17.4441, country:'Senegal', notes:'International athletics track. Dakar 2026 Youth Olympics athletics venue.' },
+  { name:'Diamniadio Olympic Stadium (Stade Abdoulaye Wade)', type:'track', lat:14.7142, lon:-17.1731, country:'Senegal', notes:'50,000 capacity. IAAF/FIFA certified. Dakar 2026 Youth Olympics. Diamniadio.' },
+  { name:'Piscine Olympique Nationale Dakar', type:'pool', lat:14.7018, lon:-17.4677, country:'Senegal', notes:'National Olympic pool. Point E, Dakar. Upgraded for Dakar 2026.' },
+  { name:'Tour de l\'Oeuf Swimming Venue', type:'pool', lat:14.7220, lon:-17.4632, country:'Senegal', notes:'Dakar 2026 Youth Olympics swimming venue.' },
+  { name:'Dakar Arena', type:'hall', lat:14.7139, lon:-17.1724, country:'Senegal', notes:'15,000 capacity multi-sport arena. Diamniadio. Dakar 2026 Youth Olympics.' },
+];
+
+const map = L.map('map').setView([20, 10], 3);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
   attribution: '© OpenStreetMap © CARTO', subdomains: 'abcd', maxZoom: 19
 }).addTo(map);
@@ -155,23 +249,40 @@ function isElite(name, type) {
   return (ELITE_KW[type]||[]).some(k => n.includes(k));
 }
 
-function makeIcon(type, elite) {
+function makeIcon(type, elite, curated) {
   const c = COLORS[type];
-  const b = elite ? '#137333' : '#dadce0';
-  const bw = elite ? 2.5 : 1.5;
+  const border = curated ? '#1a56d6' : (elite ? '#137333' : '#dadce0');
+  const bw = curated ? 2.5 : (elite ? 2 : 1.5);
+  const inner = curated
+    ? `<circle cx="12" cy="12" r="4" fill="white" fill-opacity="0.8"/>`
+    : `<circle cx="12" cy="12" r="3.5" fill="white" fill-opacity="0.45"/>`;
   return L.divIcon({
-    html: `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22">
-      <circle cx="11" cy="11" r="8" fill="${c}" fill-opacity="0.9" stroke="${b}" stroke-width="${bw}"/>
-      <circle cx="11" cy="11" r="3.5" fill="white" fill-opacity="0.5"/>
+    html: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" fill="${c}" fill-opacity="${curated?'1':'0.85'}" stroke="${border}" stroke-width="${bw}"/>
+      ${inner}
     </svg>`,
-    className:'', iconSize:[22,22], iconAnchor:[11,11], popupAnchor:[0,-13]
+    className:'', iconSize:[24,24], iconAnchor:[12,12], popupAnchor:[0,-14]
   });
 }
 
-function buildPopup(place, type) {
-  const name = place.displayName?.text || place.name || 'Unnamed';
+function buildPopupCurated(v) {
+  const gmUrl = `https://www.google.com/maps?q=${v.lat},${v.lon}&z=17`;
+  return `<div class="popup-inner">
+    <div class="popup-type" style="color:${COLORS[v.type]}">${LABELS[v.type]}</div>
+    <div class="popup-name">${v.name}</div>
+    ${v.notes ? `<div class="popup-detail">${v.notes}</div>` : ''}
+    <div class="popup-tags">
+      <span class="popup-tag popup-curated">★ Verified Elite</span>
+      <span class="popup-tag popup-country">${v.country}</span>
+    </div>
+    <div class="popup-source"><a href="${gmUrl}" target="_blank">Open in Google Maps ↗</a></div>
+  </div>`;
+}
+
+function buildPopupPlaces(place, type) {
+  const name = place.displayName?.text || 'Unnamed';
   const elite = isElite(name, type);
-  const addr = place.formattedAddress || place.vicinity || '';
+  const addr = place.formattedAddress || '';
   const lat = place.location?.latitude;
   const lon = place.location?.longitude;
   const gmUrl = `https://www.google.com/maps?q=${lat},${lon}&z=17`;
@@ -180,18 +291,31 @@ function buildPopup(place, type) {
     <div class="popup-type" style="color:${COLORS[type]}">${LABELS[type]}</div>
     <div class="popup-name">${name}</div>
     ${addr ? `<div class="popup-detail">${addr}</div>` : ''}
-    ${rating ? `<div class="popup-detail" style="color:#f5a623;margin-top:2px">${rating}</div>` : ''}
+    ${rating ? `<div class="popup-detail" style="color:#f5a623">${rating}</div>` : ''}
     <div class="popup-tags">
-      <span class="popup-tag ${elite?'popup-verified':'popup-unverified'}">${elite?'✓ Likely elite-standard':'Needs verification'}</span>
+      <span class="popup-tag ${elite?'popup-verified':'popup-unverified'}">${elite?'✓ Likely elite':'Needs verification'}</span>
     </div>
     <div class="popup-source"><a href="${gmUrl}" target="_blank">Open in Google Maps ↗</a></div>
   </div>`;
 }
 
-function clearMarkers() {
-  allMarkers.forEach(m => map.removeLayer(m));
-  allMarkers = [];
+function clearDynamicMarkers() {
+  allMarkers.filter(m => !m._curated).forEach(m => map.removeLayer(m));
+  allMarkers = allMarkers.filter(m => m._curated);
   seenIds.clear();
+}
+
+function addCuratedMarkers() {
+  CURATED.forEach(v => {
+    if (allMarkers.find(m => m._curatedName === v.name)) return;
+    const marker = L.marker([v.lat, v.lon], { icon: makeIcon(v.type, true, true), zIndexOffset: 1000 });
+    marker._type = v.type;
+    marker._curated = true;
+    marker._curatedName = v.name;
+    marker.bindPopup(buildPopupCurated(v), { maxWidth: 320 });
+    if (activeTypes.has(v.type)) marker.addTo(map);
+    allMarkers.push(marker);
+  });
 }
 
 function updateVisibility() {
@@ -204,38 +328,21 @@ function updateVisibility() {
 
 function updateCount() {
   const n = allMarkers.filter(m => activeTypes.has(m._type)).length;
-  document.getElementById('result-count').textContent = n > 0 ? `${n} facilities shown` : '';
+  const c = allMarkers.filter(m => activeTypes.has(m._type) && m._curated).length;
+  document.getElementById('result-count').textContent = n > 0 ? `${n} facilities (${c} verified elite)` : '';
 }
 
-// Uses Places API (New) Text Search — single fast REST call per type
 async function searchType(type, lat, lon, radiusM) {
-  const url = `https://places.googleapis.com/v1/places:searchText`;
-  const body = {
-    textQuery: QUERIES[type],
-    locationBias: {
-      circle: {
-        center: { latitude: lat, longitude: lon },
-        radius: Math.min(radiusM, 50000)
-      }
-    },
-    maxResultCount: 20
-  };
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Goog-Api-Key': API_KEY,
-      'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.location,places.rating,places.id'
-    },
-    body: JSON.stringify(body)
-  });
-  if (!res.ok) { console.warn('Places API error', res.status, await res.text()); return []; }
-  const data = await res.json();
-  return (data.places || []).filter(p => {
-    if (seenIds.has(p.id)) return false;
-    seenIds.add(p.id);
-    return true;
-  });
+  try {
+    const res = await fetch('https://places.googleapis.com/v1/places:searchText', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': API_KEY, 'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.location,places.rating,places.id' },
+      body: JSON.stringify({ textQuery: QUERIES[type], locationBias: { circle: { center: { latitude: lat, longitude: lon }, radius: Math.min(radiusM, 50000) } }, maxResultCount: 20 })
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return (data.places || []).filter(p => { if (seenIds.has(p.id)) return false; seenIds.add(p.id); return true; });
+  } catch(e) { return []; }
 }
 
 async function runSearch(lat, lon, radiusM) {
@@ -243,36 +350,36 @@ async function runSearch(lat, lon, radiusM) {
   document.getElementById('no-results').style.display = 'none';
   loading.classList.add('show');
   document.getElementById('loading-text').textContent = 'Searching Google Places…';
-  clearMarkers();
+  clearDynamicMarkers();
 
-  const types = [...activeTypes];
+  const results = await Promise.all([...activeTypes].map(t => searchType(t, lat, lon, radiusM).then(places => ({ t, places }))));
 
-  // All types fire simultaneously
-  const results = await Promise.all(types.map(t => searchType(t, lat, lon, radiusM).then(places => ({ t, places }))));
-
-  let total = 0;
   results.forEach(({ t, places }) => {
     places.forEach(place => {
       const plat = place.location?.latitude;
       const plon = place.location?.longitude;
       if (!plat || !plon) return;
+      const tooClose = allMarkers.some(m => m._curated && m._type === t &&
+        Math.abs(m.getLatLng().lat - plat) < 0.002 && Math.abs(m.getLatLng().lng - plon) < 0.002);
+      if (tooClose) return;
       const elite = isElite(place.displayName?.text || '', t);
-      const marker = L.marker([plat, plon], { icon: makeIcon(t, elite) });
+      const marker = L.marker([plat, plon], { icon: makeIcon(t, elite, false) });
       marker._type = t;
-      marker.bindPopup(buildPopup(place, t), { maxWidth: 300 });
+      marker._curated = false;
+      marker.bindPopup(buildPopupPlaces(place, t), { maxWidth: 300 });
       if (activeTypes.has(t)) marker.addTo(map);
       allMarkers.push(marker);
-      total++;
     });
   });
 
   loading.classList.remove('show');
   updateCount();
+  const total = allMarkers.filter(m => activeTypes.has(m._type)).length;
   if (total === 0) {
     document.getElementById('no-results').style.display = 'block';
     document.getElementById('status-text').textContent = 'No facilities found. Try a larger area.';
   } else {
-    document.getElementById('status-text').textContent = `Found ${total} facilities. Green ring = likely elite-standard.`;
+    document.getElementById('status-text').textContent = `Blue pins = verified elite venues. Search another area to add more results.`;
   }
 }
 
@@ -305,17 +412,12 @@ async function geocodeAndSearch(query) {
   btn.disabled = false; btn.textContent = 'Search';
 }
 
-document.getElementById('search-btn').addEventListener('click', () => {
-  const q = document.getElementById('search-input').value.trim();
-  if (q) geocodeAndSearch(q);
-});
-document.getElementById('search-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') { const q = document.getElementById('search-input').value.trim(); if (q) geocodeAndSearch(q); }
-});
-document.getElementById('search-btn-radius').addEventListener('click', () => {
-  const { lat, lon, radius } = getMapCentre();
-  runSearch(lat, lon, radius);
-});
+addCuratedMarkers();
+updateCount();
+
+document.getElementById('search-btn').addEventListener('click', () => { const q = document.getElementById('search-input').value.trim(); if (q) geocodeAndSearch(q); });
+document.getElementById('search-input').addEventListener('keydown', e => { if (e.key === 'Enter') { const q = document.getElementById('search-input').value.trim(); if (q) geocodeAndSearch(q); } });
+document.getElementById('search-btn-radius').addEventListener('click', () => { const { lat, lon, radius } = getMapCentre(); runSearch(lat, lon, radius); });
 document.querySelectorAll('.filter-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const type = btn.dataset.type;
