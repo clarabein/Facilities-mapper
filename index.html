@@ -126,12 +126,12 @@
 const API_KEY = 'AIzaSyBuY96MLxsRqaZ-zNBdR2GDw-1Fyn8dA2I';
 const COLORS  = { pool:'#1a8fc1', track:'#d44a2b', velodrome:'#9c5fc4', hockey:'#1e9e5e', hall:'#c49b00' };
 const LABELS  = { pool:'50m / 33m Pool', track:'Athletics Track', velodrome:'Velodrome', hockey:'Hockey Field', hall:'Sports Hall' };
-const QUERIES = {
-  pool:      'aquatics centre OR olympic swimming pool OR 50m pool OR university swimming pool OR school swimming pool',
-  track:     'athletics track OR athletics stadium OR university athletics track OR school athletics track',
-  velodrome: 'velodrome OR cycling track OR university velodrome',
-  hockey:    'field hockey pitch OR hockey astroturf OR university hockey pitch OR school hockey pitch',
-  hall:      'indoor sports arena OR sports centre hall OR university sports hall OR school sports hall OR leisure centre'
+const QUERY_TERMS = {
+  pool:      ['50m swimming pool', 'aquatics centre', 'olympic swimming pool', 'university swimming pool', 'leisure centre pool', 'international swimming centre'],
+  track:     ['athletics track', 'athletics stadium', 'running track', 'university athletics', 'sports stadium athletics', 'national athletics centre'],
+  velodrome: ['velodrome', 'indoor velodrome', 'national cycling centre'],
+  hockey:    ['field hockey pitch', 'hockey astroturf', 'hockey centre', 'FIH hockey', 'water based hockey pitch', 'university hockey', 'synthetic hockey turf'],
+  hall:      ['indoor sports centre', 'sports hall', 'leisure centre', 'multi-sport arena', 'university sports centre', 'national sports centre', 'performance centre']
 };
 const ELITE_KW = {
   pool:      ['olympic','50m','aquatic','national','international','competition'],
@@ -184,7 +184,7 @@ const CURATED = [
   { name:'Anna Meares Velodrome', type:'velodrome', lat:-27.9712, lon:153.3924, country:'Australia', notes:'UCI certified. Gold Coast 2018 Commonwealth Games. Will host 2030 UCI Track World Champs.' },
   { name:'Dunc Gray Velodrome', type:'velodrome', lat:-33.9028, lon:151.0341, country:'Australia', notes:'Sydney 2000 Olympic velodrome. Bass Hill.' },
   { name:'Gold Coast Performance Centre (GCPC) Hockey', type:'hockey', lat:-27.9680, lon:153.3950, country:'Australia', notes:'Runaway Bay. International standard hockey pitch. Elite prep camp base.' },
-  { name:'Perth Hockey Stadium', type:'hockey', lat:-31.9455, lon:115.8749, country:'Australia', notes:'International standard. Home of Hockey Australia.' },
+  { name:'Cairns Regional Hockey Centre', type:'hockey', lat:-16.8987, lon:145.7418, country:'Australia', notes:'2 water-based FIH spec artificial pitches. 365 Lake Street, Cairns North. 2km from airport.' },
   { name:'AIS Arena Canberra', type:'hall', lat:-35.2462, lon:149.1013, country:'Australia', notes:'Multi-sport indoor arena. Australian Institute of Sport.' },
   { name:'Melbourne Arena (John Cain Arena)', type:'hall', lat:-37.8224, lon:144.9814, country:'Australia', notes:'Multi-sport elite venue. Melbourne Olympic Park precinct.' },
 
@@ -332,12 +332,16 @@ function updateCount() {
   document.getElementById('result-count').textContent = n > 0 ? `${n} facilities (${c} verified elite)` : '';
 }
 
-async function searchType(type, lat, lon, radiusM) {
+async function searchTerm(term, locationName, lat, lon, radiusM) {
   try {
     const res = await fetch('https://places.googleapis.com/v1/places:searchText', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': API_KEY, 'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.location,places.rating,places.id' },
-      body: JSON.stringify({ textQuery: QUERIES[type], locationBias: { circle: { center: { latitude: lat, longitude: lon }, radius: Math.min(radiusM, 50000) } }, maxResultCount: 20 })
+      body: JSON.stringify({
+        textQuery: `${term} ${locationName}`,
+        locationBias: { circle: { center: { latitude: lat, longitude: lon }, radius: Math.min(radiusM, 50000) } },
+        maxResultCount: 20
+      })
     });
     if (!res.ok) return [];
     const data = await res.json();
@@ -345,29 +349,37 @@ async function searchType(type, lat, lon, radiusM) {
   } catch(e) { return []; }
 }
 
-async function runSearch(lat, lon, radiusM) {
+async function runSearch(lat, lon, radiusM, locationName) {
   const loading = document.getElementById('loading-overlay');
   document.getElementById('no-results').style.display = 'none';
   loading.classList.add('show');
   document.getElementById('loading-text').textContent = 'Searching Google Places…';
   clearDynamicMarkers();
 
-  const results = await Promise.all([...activeTypes].map(t => searchType(t, lat, lon, radiusM).then(places => ({ t, places }))));
+  // Build every combination of type + term and fire all in parallel
+  const allPromises = [];
+  for (const type of activeTypes) {
+    for (const term of QUERY_TERMS[type]) {
+      allPromises.push(searchTerm(term, locationName, lat, lon, radiusM).then(places => ({ type, places })));
+    }
+  }
 
-  results.forEach(({ t, places }) => {
+  const settled = await Promise.all(allPromises);
+
+  settled.forEach(({ type, places }) => {
     places.forEach(place => {
       const plat = place.location?.latitude;
       const plon = place.location?.longitude;
       if (!plat || !plon) return;
-      const tooClose = allMarkers.some(m => m._curated && m._type === t &&
+      const tooClose = allMarkers.some(m => m._curated && m._type === type &&
         Math.abs(m.getLatLng().lat - plat) < 0.002 && Math.abs(m.getLatLng().lng - plon) < 0.002);
       if (tooClose) return;
-      const elite = isElite(place.displayName?.text || '', t);
-      const marker = L.marker([plat, plon], { icon: makeIcon(t, elite, false) });
-      marker._type = t;
+      const elite = isElite(place.displayName?.text || '', type);
+      const marker = L.marker([plat, plon], { icon: makeIcon(type, elite, false) });
+      marker._type = type;
       marker._curated = false;
-      marker.bindPopup(buildPopupPlaces(place, t), { maxWidth: 300 });
-      if (activeTypes.has(t)) marker.addTo(map);
+      marker.bindPopup(buildPopupPlaces(place, type), { maxWidth: 300 });
+      if (activeTypes.has(type)) marker.addTo(map);
       allMarkers.push(marker);
     });
   });
@@ -404,7 +416,7 @@ async function geocodeAndSearch(query) {
     map.setView([lat, lon], 12);
     await new Promise(r => setTimeout(r, 300));
     const { radius } = getMapCentre();
-    await runSearch(lat, lon, radius);
+    await runSearch(lat, lon, radius, query);
   } catch(e) {
     document.getElementById('status-text').textContent = 'Location not found. Try a different search.';
     document.getElementById('loading-overlay').classList.remove('show');
@@ -417,7 +429,18 @@ updateCount();
 
 document.getElementById('search-btn').addEventListener('click', () => { const q = document.getElementById('search-input').value.trim(); if (q) geocodeAndSearch(q); });
 document.getElementById('search-input').addEventListener('keydown', e => { if (e.key === 'Enter') { const q = document.getElementById('search-input').value.trim(); if (q) geocodeAndSearch(q); } });
-document.getElementById('search-btn-radius').addEventListener('click', () => { const { lat, lon, radius } = getMapCentre(); runSearch(lat, lon, radius); });
+document.getElementById('search-btn-radius').addEventListener('click', async () => {
+  const { lat, lon, radius } = getMapCentre();
+  // Reverse geocode to get location name for better query results
+  try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`, { headers:{'Accept-Language':'en'} });
+    const d = await r.json();
+    const locationName = d.address?.city || d.address?.town || d.address?.county || d.address?.country || '';
+    runSearch(lat, lon, radius, locationName);
+  } catch(e) {
+    runSearch(lat, lon, radius, '');
+  }
+});
 document.querySelectorAll('.filter-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const type = btn.dataset.type;
