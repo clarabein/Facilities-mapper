@@ -127,11 +127,11 @@ const API_KEY = 'AIzaSyBuY96MLxsRqaZ-zNBdR2GDw-1Fyn8dA2I';
 const COLORS  = { pool:'#1a8fc1', track:'#d44a2b', velodrome:'#9c5fc4', hockey:'#1e9e5e', hall:'#c49b00' };
 const LABELS  = { pool:'50m / 33m Pool', track:'Athletics Track', velodrome:'Velodrome', hockey:'Hockey Field', hall:'Sports Hall' };
 const QUERY_TERMS = {
-  pool:      ['50m swimming pool', 'aquatics centre', 'olympic swimming pool', 'university swimming pool', 'leisure centre pool', 'international swimming centre'],
-  track:     ['athletics track', 'athletics stadium', 'running track', 'university athletics', 'sports stadium athletics', 'national athletics centre'],
+  pool:      ['50m swimming pool', 'olympic swimming pool', 'aquatics centre', 'aquatic centre', 'international swimming centre'],
+  track:     ['athletics track', 'athletics stadium', 'national athletics centre', 'athletics arena'],
   velodrome: ['indoor velodrome', 'olympic velodrome', 'UCI track cycling velodrome'],
-  hockey:    ['field hockey pitch', 'hockey astroturf', 'hockey centre', 'FIH hockey', 'water based hockey pitch', 'university hockey', 'synthetic hockey turf'],
-  hall:      ['indoor sports centre', 'sports hall', 'leisure centre', 'multi-sport arena', 'university sports centre', 'national sports centre', 'performance centre']
+  hockey:    ['field hockey pitch', 'hockey astroturf pitch', 'FIH hockey pitch', 'water based hockey pitch', 'national hockey centre'],
+  hall:      ['indoor sports centre', 'national sports centre', 'multi-sport arena', 'institute of sport', 'performance centre sport']
 };
 const ELITE_KW = {
   pool:      ['olympic','50m','aquatic','national','international','competition'],
@@ -332,12 +332,26 @@ function updateCount() {
   document.getElementById('result-count').textContent = n > 0 ? `${n} facilities (${c} verified elite)` : '';
 }
 
-function isValidVelodrome(name) {
+// Generic exclude list — applies to all categories
+const GLOBAL_EXCLUDE = ['shop', 'store', 'hire', 'rental', 'repair', 'café', 'cafe', 'restaurant',
+  'hotel', 'apartment', 'accommodation', 'b&b', 'guest house', 'parking', 'car park',
+  'estate agent', 'real estate', 'insurance', 'clinic', 'pharmacy', 'school of motoring'];
+
+// Each type must contain at least one of its required words in the name to qualify
+const REQUIRED_WORDS = {
+  pool:      ['pool', 'aquatic', 'swim', 'leisure centre', 'leisure center'],
+  track:     ['track', 'stadium', 'athletics', 'arena'],
+  velodrome: ['velodrome'],
+  hockey:    ['hockey'],
+  hall:      ['sports hall', 'sports centre', 'sports center', 'leisure centre', 'leisure center',
+              'arena', 'gymnasium', 'gym', 'indoor sports', 'performance centre', 'performance center',
+              'institute of sport']
+};
+
+function isValidVenue(name, type) {
   const n = (name || '').toLowerCase();
-  const excludeWords = ['shop', 'hire', 'repair', 'rental', 'store', 'cafe', 'café', 'path', 'trail', 'route', 'club ride', 'tour', 'rack', 'parking'];
-  if (excludeWords.some(w => n.includes(w))) return false;
-  // Must actually contain "velodrome" in the name to qualify
-  return n.includes('velodrome');
+  if (GLOBAL_EXCLUDE.some(w => n.includes(w))) return false;
+  return (REQUIRED_WORDS[type] || []).some(w => n.includes(w));
 }
 
 async function searchTerm(term, locationName, lat, lon, radiusM, type) {
@@ -380,8 +394,8 @@ async function runSearch(lat, lon, radiusM, locationName) {
       const plon = place.location?.longitude;
       if (!plat || !plon) return;
       const name = place.displayName?.text || '';
-      // Strict filter for velodromes — must contain "velodrome" and not be a shop/path/etc
-      if (type === 'velodrome' && !isValidVelodrome(name)) return;
+      // Strict name-based filter for every category — rejects shops, hotels, cafes etc.
+      if (!isValidVenue(name, type)) return;
       const tooClose = allMarkers.some(m => m._curated && m._type === type &&
         Math.abs(m.getLatLng().lat - plat) < 0.002 && Math.abs(m.getLatLng().lng - plon) < 0.002);
       if (tooClose) return;
